@@ -1,18 +1,19 @@
-import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Container } from '@chakra-ui/react';
 import LobbyScreen from './pages/LobbyScreen';
 import GameScreen from './pages/GameScreen';
-import { Container } from '@chakra-ui/react';
+import NotFoundScreen from './pages/NotFoundScreen';
+import ThemeButton from './components/ThemeButton';
 
 function App(): JSX.Element {
-  const [count, setCount] = useState<number>(0);
-
   return (
       <Container p={0} pt={6} maxW='full' h='100vh' bg='transparent'>
         <Routes>
           <Route path="/" element={<LobbyScreen />} />
           <Route path="/room" element={<GameScreen />} />
+          <Route path="*" element={<NotFoundScreen />} />
         </Routes>
+        <ThemeButton />
       </Container>
   )
 }
