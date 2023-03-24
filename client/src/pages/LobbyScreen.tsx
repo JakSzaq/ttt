@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { AspectRatio, Container, Button, Text, VStack, Stack, Input, useColorModeValue } from '@chakra-ui/react';
-import { random } from '../assets/Random';
+import { random } from '../utils/Random';
 import Logo from '../assets/Logo';
 import BackgroundSVG from '../assets/BackgroundSVG';
-import Footer from '../components/Footer';
 
 import io from 'socket.io-client';
 const socket = io(process.env.REACT_APP_WS_SERVER || "http://localhost:80" )
@@ -14,7 +13,7 @@ const LobbyScreen: React.FC = () => {
   const [roomCode, setRoomCode] = useState<string>("");
 
   const primaryColor = useColorModeValue('#FFCF55', '#9A92FF');
-  
+
   function joinRoom() {
     roomCode && navigate({
       pathname: '/room',
@@ -63,7 +62,6 @@ const LobbyScreen: React.FC = () => {
           <Text position='relative' fontWeight='bold' fontSize={['4xl','6xl']}>Create new room</Text>
           <Button onClick={handleCreate} w={[200,250]} borderRadius='50px' bg='#FF6C6C'>Click to start</Button>
         </VStack>
-        <Footer />
       </VStack>
     </Container>
   )

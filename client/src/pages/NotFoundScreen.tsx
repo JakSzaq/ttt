@@ -6,6 +6,7 @@ import Logo from '../assets/Logo';
 const NotFoundScreen: React.FC = () => {
   const navigate: NavigateFunction = useNavigate();
   const logoColor = useColorModeValue('#000000','#FFFFFF');
+  
   return (
     <VStack maxW='full' h='500px' p={0} spacing={5}>
       <AspectRatio maxW='100px' w={100} ratio={1}>
