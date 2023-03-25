@@ -1,7 +1,7 @@
 import React from 'react';
-import { LogoParams } from '../interfaces';
+import { LogoProps } from '../interfaces';
 
-const Logo: React.FC<LogoParams> = ({color, theme, width, height}) => {
+const Logo: React.FC<LogoProps> = ({color, theme, width, height}) => {
   return (
     <svg className="logoSVG" width={width} height={height} viewBox="0 0 159 159" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g id="TTT-logo">

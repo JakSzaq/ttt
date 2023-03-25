@@ -8,7 +8,7 @@ export const ActionButton: React.FC<ButtonProps> = ({type}) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const navigate: NavigateFunction = useNavigate();
 
-  const handleExitClick = () => {
+  const handleExitClick: React.MouseEventHandler<HTMLButtonElement> = () => {
     navigate("/");
   }
 
