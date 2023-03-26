@@ -1,6 +1,6 @@
 import { ToastProps } from "../interfaces"
 
-export const showToast: Function = ({toast, toastId, toastTitle, toastStatus}: ToastProps) => {
+export const showToast: Function = ({toast, toastId, toastTitle, toastStatus}: ToastProps): void => {
     if (!toast.isActive(toastId)){
       toast.closeAll();
       toast({

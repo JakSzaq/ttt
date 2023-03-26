@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { AspectRatio, Container, Button, Text, VStack, Stack, Input, useColorModeValue } from '@chakra-ui/react';
 import { random } from '../utils/Random';

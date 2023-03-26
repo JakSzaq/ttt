@@ -11,8 +11,8 @@ export interface LogoProps extends SVGProps {
 
 export interface GameBoardProps extends ButtonProps {
     index: number;
-    turn: any;
-    value: any;
+    turn(index: number): void;
+    value: string;
     combination: number[];
     player: string;
 }
@@ -32,4 +32,10 @@ export interface ToastProps {
 
 export interface ButtonProps {
     type: string;
+}
+
+export interface RoomDataProps {
+    index: number;
+    room: string;
+    value: string;
 }

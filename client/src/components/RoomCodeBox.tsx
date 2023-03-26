@@ -10,7 +10,7 @@ export const RoomCodeBox: React.FC<CodeBoxProps> = ({ room, isOnLeftSide, isFull
   const modeColor = useColorModeValue('#83B4FF','#5F56E6');
   const toast = useToast();
   
-  const handleCopy = () => {
+  const handleCopy: React.MouseEventHandler<HTMLButtonElement> = () => {
     onCopy();
     showToast({ 
       toast: toast,

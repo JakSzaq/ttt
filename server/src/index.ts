@@ -30,9 +30,9 @@ const clientsInRoom: object = {};
 const existingRooms: string[] = [];
 
 io.on('connection', (socket: Socket) => {
-    socket.on('reqTurn', (data) => {
-        const room: string = JSON.parse(data).room;
-        io.to(room).emit('playerTurn', data);
+    socket.on('reqTurn', (roomData) => {
+        const room: string = roomData.room;
+        io.to(room).emit('playerTurn', roomData);
     })
 
     socket.on('addNewRoom', room => {
@@ -65,8 +65,7 @@ io.on('connection', (socket: Socket) => {
         }
     })
 
-    socket.on('reqRestart', (data) => {
-        const room: string = JSON.parse(data).room;
+    socket.on('reqRestart', room => {
         io.to(room).emit('restartRoom');
     })
 
