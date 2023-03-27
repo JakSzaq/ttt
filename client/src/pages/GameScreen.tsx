@@ -25,9 +25,11 @@ const GameScreen: React.FC = () => {
   const [room, setRoom] = useState<string>("");
   const [turnSwitch, setTurnSwitch] = useState<boolean>(false);
   const [turnData, setTurnData] = useState<RoomDataProps>({ index: 0, room: '', value: '' });
+
   const location = useLocation();
-  const paramsRoom: string = location.search.substring(1);
+  const roomCode: string = location.search.substring(1);
   const navigate: NavigateFunction = useNavigate();
+
   const primaryColor = useColorModeValue('#FFCF55', '#9A92FF');
   const initialBoardColor = useColorModeValue('#D9D9D9', '#414141');
   const secondPlayerColor = useColorModeValue('#83B4FF', '#5F56E6');
@@ -53,28 +55,16 @@ const GameScreen: React.FC = () => {
 
   const playerTurnChanged = (roomData: RoomDataProps) => {
     const data = roomData;
-    const g: string[] = [...game];
-    if (!g[data.index] && !winner) {
-      g[data.index] = data.value;
-      setGame(g);
+    const currGame: string[] = [...game];
+    if (!currGame[data.index] && !winner) {
+      currGame[data.index] = data.value;
+      setGame(currGame);
       setTurnNumber(turnNumber + 1);
       setTurnSwitch(false);
       setMyTurn(!myTurn);
       setPlayer(data.value);
     }
   }
-
-  useEffect(() => {
-    combinations.forEach((c: number[]) => {
-      if (game[c[0]] === game[c[1]] && game[c[0]] === game[c[2]] && game[c[0]] !== '') {
-        setWinningCombination(c);
-        setWinner(true);
-      }
-    });
-    if (turnNumber === 0) {
-      setMyTurn(myTurn ? true : false);
-    }
-  }, [game, turnNumber, xo]);
   
   useEffect(() => {
     socket.on('playerTurn', (roomData: RoomDataProps) => {
@@ -119,15 +109,15 @@ const GameScreen: React.FC = () => {
       });
     });
 
-    socket.on("gameStatus", function() {
-      if (paramsRoom.length > 8){
-         socket.emit('updateRoom', paramsRoom.substring(5));
+    socket.on("gameStatus", () => {
+      if (roomCode.length > 8){
+         socket.emit('updateRoom', roomCode.substring(5));
       } else {
-         socket.emit('updateRoom', paramsRoom);
+         socket.emit('updateRoom', roomCode);
       }
     });
 
-    socket.on('pauseGame', function(){
+    socket.on('pauseGame', () => {
         setXO('X');
         setMyTurn(true);
         setHasOpponent(false);
@@ -142,22 +132,29 @@ const GameScreen: React.FC = () => {
           toastStatus: 'warning' 
         });
     });
+    return () => {
+      socket.off();
+    }
   }, []);
   
+  useEffect(() => {
+    combinations.map((combination: number[]) => {
+      if (game[combination[0]] === game[combination[1]] && game[combination[0]] === game[combination[2]] && game[combination[0]] !== '') {
+        setWinningCombination(combination);
+        setWinner(true);
+      }
+    })
+    turnNumber === 0 && setMyTurn(myTurn ? true : false);
+  }, [game, turnNumber, xo]);
+
   useEffect(() => {
     if (turnSwitch) {
       playerTurnChanged(turnData);
     }
   }, [turnSwitch]);
 
-  useEffect(()=>{    
-    return ()=>{
-      socket.emit('manualDisconnect');
-    }
-  },[])
-  
   useEffect(() => {
-      const roomName: string = paramsRoom.substring(5);
+      const roomName: string = roomCode.substring(5);
       if (roomName.length === 8) {
         socket.emit('createRoom', roomName);
         setRoom(roomName);
@@ -165,11 +162,14 @@ const GameScreen: React.FC = () => {
       }
       else {
         setXO('O');
-        socket.emit('joinRoom', paramsRoom);
-        setRoom(paramsRoom);
+        socket.emit('joinRoom', roomCode);
+        setRoom(roomCode);
         setMyTurn(false);
       } 
-  }, [paramsRoom]);
+      return () => {
+        socket.emit('manualDisconnect');
+      }
+  }, []);
 
   return (
     <Container maxW='full' h='full' p={0} >
@@ -184,8 +184,18 @@ const GameScreen: React.FC = () => {
           </Stack>
           <VStack h='12vh' justifyContent='center'>
             <Text h="auto" fontWeight="bold" as={motion.p} transition={'.5s'} fontSize={hasOpponent && !winner && turnNumber !== 9 ? ['xl','4xl'] : ['4vh','4xl','6xl']}>
-              {hasOpponent ? ((winner || turnNumber === 9) ? (winner ? (player === xo ? "You've won!" : "You've lost!") : 
-              (turnNumber === 9 ? "You've tied!" : null)) : (myTurn ? "It's your turn" : "It's the opponent's turn")) : "Waiting for opponent..."}
+              {hasOpponent 
+                ? ((winner || turnNumber === 9) 
+                  ? (winner 
+                    ? (player === xo 
+                      ? "You've won!" 
+                      : "You've lost!")   
+                    : "You've tied!") 
+                  : (myTurn 
+                    ? "It's your turn" 
+                    : "It's the opponent's turn"))
+                : "Waiting for opponent..."
+              }
             </Text>
           </VStack>
           <VStack fontFamily="Outfit" as={motion.div} transition={'.5s'} spacing={[1.5,3]} fontSize={['8vh','12vh']}  transformOrigin={"50% 0"} style={{ transform: !hasOpponent || winner || turnNumber === 9 ? 'scale(1)' : (myTurn ? 'scale(1.25)' : 'scale(1)')}}>

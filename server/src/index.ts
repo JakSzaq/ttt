@@ -65,6 +65,12 @@ io.on('connection', (socket: Socket) => {
         }
     })
 
+    socket.on('getAllRooms', roomCode => {
+        existingRooms.includes(roomCode)
+          ? socket.emit('canJoinRoom', roomCode)
+          : socket.emit('canJoinRoom', null);
+    })
+
     socket.on('reqRestart', room => {
         io.to(room).emit('restartRoom');
     })

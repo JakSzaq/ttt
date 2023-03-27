@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
-import { AspectRatio, Container, Button, Text, VStack, Stack, Input, useColorModeValue } from '@chakra-ui/react';
+import { AspectRatio, Container, Button, Text, VStack, Stack, Input, useColorModeValue, useToast } from '@chakra-ui/react';
 import { random } from '../utils/Random';
+import { showToast } from '../utils/ShowToast';
 import Logo from '../assets/Logo';
 import BackgroundSVG from '../assets/BackgroundSVG';
 
@@ -11,15 +12,35 @@ const socket = io(process.env.REACT_APP_WS_SERVER || "http://localhost:80" )
 const LobbyScreen: React.FC = () => {
   const navigate: NavigateFunction = useNavigate();
   const [roomCode, setRoomCode] = useState<string>("");
+  const toast = useToast();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const primaryColor = useColorModeValue('#FFCF55', '#9A92FF');
 
-  function joinRoom() {
+  function joinRoom(roomCode: string) {
     roomCode && navigate({
       pathname: '/room',
       search: `?${roomCode}`,
     });
   }
+  
+  useEffect(() => {
+    socket.on("canJoinRoom", (value: string) => {
+      if (value) { joinRoom(value) }
+      else {
+        if (inputRef.current) inputRef.current.focus();
+        showToast({ 
+          toast: toast,
+          toastId: 'roomCodeInvalidToast', 
+          toastTitle: 'Invalid room code!', 
+          toastStatus: 'error' 
+        });
+      }
+    });
+    return () => {
+      socket.off("canJoinRoom");
+    }
+  }, [])
 
   const handleCreate: React.MouseEventHandler<HTMLButtonElement> = () => {
     const newRoomName: string = random();
@@ -31,7 +52,7 @@ const LobbyScreen: React.FC = () => {
   }
 
   const handleJoin: React.MouseEventHandler<HTMLButtonElement> = () => {
-    joinRoom();
+    socket.emit('getAllRooms', roomCode);
   }
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -40,7 +61,7 @@ const LobbyScreen: React.FC = () => {
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
      if (e.key === 'Enter') {
-      joinRoom();
+      socket.emit('getAllRooms', roomCode);
      }
   }
   
@@ -53,7 +74,7 @@ const LobbyScreen: React.FC = () => {
           </AspectRatio>
           <Text fontWeight='bold' fontSize={['4xl','6xl']}>Join a game</Text>
           <Stack direction={{ base: 'column', sm: 'row' }}>
-            <Input onChange={handleChange} onKeyDown={handleKeyDown} w={200}  textAlign='center' maxLength={8} placeholder='Enter room code'></Input>
+            <Input ref={inputRef} onChange={handleChange} onKeyDown={handleKeyDown} value={roomCode} w={200} textAlign='center' maxLength={8} placeholder='Enter room code'></Input>
             <Button onClick={handleJoin} bg={primaryColor}>JOIN</Button>
           </Stack>
         </VStack>
