@@ -30,7 +30,7 @@ const clientsInRoom: object = {};
 const existingRooms: string[] = [];
 
 io.on("connection", (socket: Socket) => {
-  socket.on("reqMove", (roomData) => {
+  socket.on("nextMove", (roomData) => {
     const room: string = roomData.room;
     io.to(room).emit("playerMove", roomData);
   });
@@ -70,7 +70,7 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  socket.on("reqRestart", (room) => {
+  socket.on("restartGame", (room) => {
     io.to(room).emit("restartRoom");
   });
 

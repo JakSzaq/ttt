@@ -1,12 +1,11 @@
 import React from "react";
-import { GameBoardProps } from "../types";
+import { IGameBoardProps } from "../types";
 import { Flex } from "@chakra-ui/react";
 import { useColorType } from "../hooks/useColorType";
 
-export const GameBox: React.FC<GameBoardProps> = ({ index, turn, value, combination, player, color }) => {
+export const GameBox: React.FC<IGameBoardProps> = ({ index, turn, value, combination, player, color }) => {
   const [_, getAllColors] = useColorType();
-  const playerColor = getAllColors()[0];
-  const opponentColor = getAllColors()[1];
+  const colors = getAllColors();
 
   return (
     <>
@@ -23,13 +22,13 @@ export const GameBox: React.FC<GameBoardProps> = ({ index, turn, value, combinat
         </Flex>
       ) : (
         <>
-          {combination[0] === index || combination[1] === index || combination[2] === index ? (
+          {combination.includes(index) ? (
             <Flex
               alignItems="center"
               justifyContent="center"
               w={["10vh", "13vh"]}
               h={["10vh", "13vh"]}
-              bg={player === value ? playerColor : opponentColor}
+              bg={player === value ? colors[0] : colors[1]}
               onClick={() => turn(index)}
             >
               {value}

@@ -1,7 +1,7 @@
 import React from "react";
-import { SVGProps } from "../types";
+import { ISVGProps } from "../types";
 
-const BackgroundSVG: React.FC<SVGProps> = ({ color }) => {
+const BackgroundSVG: React.FC<ISVGProps> = ({ color }) => {
   return (
     <svg
       className="bgSVG"
@@ -10,10 +10,7 @@ const BackgroundSVG: React.FC<SVGProps> = ({ color }) => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d="M0 453.206C820.8 -367.594 1620.67 111.206 1918 453.206V583.5H0V453.206Z"
-        fill={color}
-      />
+      <path d="M0 453.206C820.8 -367.594 1620.67 111.206 1918 453.206V583.5H0V453.206Z" fill={color} />
     </svg>
   );
 };

@@ -8,7 +8,7 @@ import { COMBINATIONS } from "../data/Combinations";
 import { showToast } from "../utils/ShowToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { ActionButton } from "../components/ActionButton";
-import { RoomDataProps } from "../types";
+import { IRoomDataProps } from "../types";
 import { useColorType } from "../hooks/useColorType";
 
 import io from "socket.io-client";
@@ -17,15 +17,15 @@ const socket = io(process.env.REACT_APP_WS_SERVER || "http://localhost:80");
 const GameScreen: React.FC = () => {
   const [board, setBoard] = useState<string[]>(Array(9).fill(""));
   const [moveCount, setMoveCount] = useState<number>(0);
-  const [myTurn, setMyTurn] = useState<boolean>(true);
+  const [isPlayerTurn, setPlayerTurn] = useState<boolean>(true);
   const [winner, setWinner] = useState<boolean>(false);
   const [symbol, setSymbol] = useState<"X" | "O">("X");
   const [player, setPlayer] = useState<string>("");
-  const [hasOpponent, setHasOpponent] = useState<boolean>(false);
+  const [isGameStarted, setGameStarted] = useState<boolean>(false);
   const [combination, setCombination] = useState<number[]>([]);
   const [room, setRoom] = useState<string>("");
   const [turnSwitch, setTurnSwitch] = useState<boolean>(false);
-  const [turnData, setTurnData] = useState<RoomDataProps>({
+  const [turnData, setTurnData] = useState<IRoomDataProps>({
     index: 0,
     room: "",
     value: "",
@@ -38,18 +38,28 @@ const GameScreen: React.FC = () => {
 
   const [isMobileSize]: boolean[] = useMediaQuery("(min-width: 992px)");
   const [getColorType, getAllColors] = useColorType();
-  const colorType = getColorType({ hasOpponent, winner, moveCount, myTurn });
-  const primaryColor = getAllColors()[0];
+  const colorType = getColorType({ isGameStarted, winner, moveCount, isPlayerTurn });
+  const colors = getAllColors();
   const toast = useToast();
 
+  const checkGameStatus = (board: string[]) => {
+    COMBINATIONS.map((combination: number[]) => {
+      if (combination.every((value) => board[value] === "X") || combination.every((value) => board[value] === "O")) {
+        setCombination(combination);
+        setWinner(true);
+      }
+    });
+    moveCount === 0 && setPlayerTurn(isPlayerTurn);
+  };
+
   const updateAppearance = () => {
-    if (hasOpponent) {
+    if (isGameStarted) {
       if (winner) {
         setGameStatusTitle(player === symbol ? "You've won!" : "You've lost!");
       } else if (moveCount === 9) {
         setGameStatusTitle("You've tied!");
       } else {
-        setGameStatusTitle(myTurn ? "It's your turn" : "It's the opponents turn");
+        setGameStatusTitle(isPlayerTurn ? "It's your turn" : "It's the opponents turn");
       }
     } else {
       setGameStatusTitle("Waiting for opponent...");
@@ -57,13 +67,13 @@ const GameScreen: React.FC = () => {
   };
 
   const sendTurn = (index: number) => {
-    if (!board[index] && !winner && myTurn && hasOpponent) {
-      socket.emit("reqMove", { index: index, value: symbol, room: room });
+    if (!board[index] && !winner && isPlayerTurn && isGameStarted) {
+      socket.emit("nextMove", { index: index, value: symbol, room: room });
     }
   };
 
   const sendRestart = () => {
-    socket.emit("reqRestart", room);
+    socket.emit("restartGame", room);
   };
 
   const restart = () => {
@@ -73,15 +83,16 @@ const GameScreen: React.FC = () => {
     setCombination([]);
   };
 
-  const playerTurnChanged = (roomData: RoomDataProps) => {
+  const playerTurnChanged = (roomData: IRoomDataProps) => {
     const data = roomData;
     const currentGame = [...board];
     if (!currentGame[data.index] && !winner) {
       currentGame[data.index] = data.value;
       setBoard(currentGame);
+      checkGameStatus(currentGame);
       setMoveCount(moveCount + 1);
       setTurnSwitch(false);
-      setMyTurn(!myTurn);
+      setPlayerTurn(!isPlayerTurn);
       setPlayer(data.value);
     }
   };
@@ -90,7 +101,7 @@ const GameScreen: React.FC = () => {
     const roomName: string = roomCode;
     socket.emit("joinRoom", roomName);
 
-    socket.on("playerMove", (roomData: RoomDataProps) => {
+    socket.on("playerMove", (roomData: IRoomDataProps) => {
       setTurnData(roomData);
       setTurnSwitch(true);
     });
@@ -109,7 +120,7 @@ const GameScreen: React.FC = () => {
     });
 
     socket.on("opponentJoined", () => {
-      setHasOpponent(true);
+      setGameStarted(true);
     });
 
     socket.on("errorRoomIsFull", () => {
@@ -139,19 +150,19 @@ const GameScreen: React.FC = () => {
     socket.on("setFirstPlayer", (roomName: string) => {
       setSymbol("X");
       setRoom(roomName);
-      setMyTurn(true);
+      setPlayerTurn(true);
     });
 
     socket.on("setSecondPlayer", (roomName: string) => {
       setSymbol("O");
       setRoom(roomName);
-      setMyTurn(false);
+      setPlayerTurn(false);
     });
 
     socket.on("opponentLeft", () => {
       setSymbol("X");
-      setMyTurn(true);
-      setHasOpponent(false);
+      setPlayerTurn(true);
+      setGameStarted(false);
       setBoard(Array(9).fill(""));
       setWinner(false);
       setMoveCount(0);
@@ -170,25 +181,13 @@ const GameScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    COMBINATIONS.map((combination: number[]) => {
-      if (combination.every((value) => board[value] === "X") || combination.every((value) => board[value] === "O")) {
-        setCombination(combination);
-        setWinner(true);
-      }
-    });
-    moveCount === 0 && setMyTurn(myTurn);
+    checkGameStatus(board);
     updateAppearance();
-  }, [board, moveCount, symbol]);
+  }, [isGameStarted, board, winner]);
 
   useEffect(() => {
-    if (turnSwitch) {
-      playerTurnChanged(turnData);
-    }
+    turnSwitch && playerTurnChanged(turnData);
   }, [turnSwitch]);
-
-  useEffect(() => {
-    updateAppearance();
-  }, [hasOpponent, winner]);
 
   return (
     <Container maxW="full" h="full" p={0}>
@@ -201,11 +200,11 @@ const GameScreen: React.FC = () => {
             justifyContent={{ base: "center", lg: "space-between" }}
             alignItems={{ base: "center", lg: "flex-start" }}
           >
-            {isMobileSize && <CodeBox room={room} isOnLeftSide={true} isFull={hasOpponent} />}
-            <AspectRatio maxW="100px" w={100} ratio={1} mb={{ base: "10px", lg: "0" }}>
-              <Logo color={primaryColor} theme={primaryColor === "#9A92FF" ? "#5F56E6" : "#83B4FF"} width={100} height={100} />
+            {isMobileSize && <CodeBox room={room} isOnLeftSide={true} isFull={isGameStarted} />}
+            <AspectRatio maxW={{ base: "50px", sm: "100px" }} w={100} ratio={1} mb={{ base: "10px", lg: "0" }}>
+              <Logo color={colors[0]} theme={colors[1]} width={100} height={100} />
             </AspectRatio>
-            <CodeBox room={room} isOnLeftSide={isMobileSize ? false : null} isFull={hasOpponent} />
+            <CodeBox room={room} isOnLeftSide={isMobileSize ? false : null} isFull={isGameStarted} />
           </Stack>
           <VStack h="12vh" justifyContent="center">
             <Text
@@ -213,7 +212,7 @@ const GameScreen: React.FC = () => {
               fontWeight="bold"
               as={motion.p}
               transition={".5s"}
-              fontSize={hasOpponent && !winner && moveCount !== 9 ? ["xl", "4xl"] : ["4vh", "4xl", "6xl"]}
+              fontSize={isGameStarted && !winner && moveCount !== 9 ? ["xl", "4xl"] : ["4vh", "4xl", "6xl"]}
             >
               {gameStatusTitle}
             </Text>
@@ -226,7 +225,7 @@ const GameScreen: React.FC = () => {
             fontSize={["8vh", "12vh"]}
             transformOrigin={"50% 0"}
             style={{
-              transform: !hasOpponent || winner || moveCount === 9 ? "scale(1)" : myTurn ? "scale(1.25)" : "scale(1)",
+              transform: !isGameStarted || winner || moveCount === 9 ? "scale(1)" : isPlayerTurn ? "scale(1.25)" : "scale(1)",
             }}
           >
             <HStack spacing={[1.5, 3]}>

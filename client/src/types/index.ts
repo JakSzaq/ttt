@@ -1,14 +1,14 @@
-export interface SVGProps {
+export interface ISVGProps {
   color: string;
 }
 
-export interface LogoProps extends SVGProps {
+export interface ILogoProps extends ISVGProps {
   theme: string;
   width: number;
   height: number;
 }
 
-export interface GameBoardProps {
+export interface IGameBoardProps {
   index: number;
   turn(index: number): void;
   value: string;
@@ -17,32 +17,32 @@ export interface GameBoardProps {
   color: string;
 }
 
-export interface CodeBoxProps {
+export interface ICodeBoxProps {
   room: string;
   isOnLeftSide: boolean | null;
   isFull: boolean;
 }
 
-export interface ToastProps {
+export interface IToastProps {
   toast: any;
   toastId: string;
   toastTitle: string;
   toastStatus: "info" | "warning" | "success" | "error" | "loading" | undefined;
 }
 
-export interface ActionButtonProps {
+export interface IActionButtonProps {
   buttonType: string;
 }
 
-export interface RoomDataProps {
+export interface IRoomDataProps {
   index: number;
   room: string;
   value: string;
 }
 
-export interface ColorTypeProps {
-  hasOpponent: boolean;
+export interface IColorTypeProps {
+  isGameStarted: boolean;
   winner: boolean;
   moveCount: number;
-  myTurn: boolean;
+  isPlayerTurn: boolean;
 }

@@ -1,5 +1,5 @@
 import { useColorModeValue } from "@chakra-ui/react";
-import { ColorTypeProps } from "../types";
+import { IColorTypeProps } from "../types";
 
 export const useColorType = () => {
   const initialColor = useColorModeValue("#D9D9D9", "#414141");
@@ -7,10 +7,10 @@ export const useColorType = () => {
   const primaryColor = useColorModeValue("#FFCF55", "#9A92FF");
   const contrastColor = useColorModeValue("#000000", "#FFFFFF");
 
-  const getColorType = ({ hasOpponent, winner, moveCount, myTurn }: ColorTypeProps): string => {
-    if (!hasOpponent || winner || moveCount === 9) {
+  const getColorType = ({ isGameStarted, winner, moveCount, isPlayerTurn }: IColorTypeProps): string => {
+    if (!isGameStarted || winner || moveCount === 9) {
       return initialColor;
-    } else if (myTurn) {
+    } else if (isPlayerTurn) {
       return primaryColor;
     } else {
       return secondaryColor;
