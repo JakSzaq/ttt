@@ -1,9 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { IGameBoardProps } from "../types";
 import { Flex } from "@chakra-ui/react";
 import { useColorType } from "../hooks/useColorType";
 
-export const GameBox: React.FC<IGameBoardProps> = ({ index, turn, value, combination, player, color }) => {
+export const GameBox: React.FC<IGameBoardProps> = memo(({ index, turn, value, combination, player, color }) => {
   const [_, getAllColors] = useColorType();
   const colors = getAllColors();
 
@@ -49,4 +49,4 @@ export const GameBox: React.FC<IGameBoardProps> = ({ index, turn, value, combina
       )}
     </>
   );
-};
+});

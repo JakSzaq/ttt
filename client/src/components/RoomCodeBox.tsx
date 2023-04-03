@@ -1,10 +1,10 @@
 import { Text, VStack, HStack, Button, useClipboard, useToast } from "@chakra-ui/react";
-import React from "react";
+import React, { memo } from "react";
 import { ICodeBoxProps } from "../types";
 import { showToast } from "../utils/ShowToast";
 import { useColorType } from "../hooks/useColorType";
 
-export const RoomCodeBox: React.FC<ICodeBoxProps> = ({ room, isOnLeftSide, isFull }) => {
+export const RoomCodeBox: React.FC<ICodeBoxProps> = memo(({ room, isOnLeftSide, isFull }) => {
   const link: string = window.location.origin + window.location.pathname + "?" + room;
   const { onCopy, hasCopied } = useClipboard(link);
   const [_, getAllColors] = useColorType();
@@ -89,4 +89,4 @@ export const RoomCodeBox: React.FC<ICodeBoxProps> = ({ room, isOnLeftSide, isFul
       </Text>
     </VStack>
   );
-};
+});

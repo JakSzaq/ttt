@@ -17,7 +17,7 @@ const socket = io(process.env.REACT_APP_WS_SERVER || "http://localhost:80");
 const GameScreen: React.FC = () => {
   const [board, setBoard] = useState<string[]>(Array(9).fill(""));
   const [moveCount, setMoveCount] = useState<number>(0);
-  const [isPlayerTurn, setPlayerTurn] = useState<boolean>(true);
+  const [isPlayerTurn, setPlayerTurn] = useState<boolean>(false);
   const [winner, setWinner] = useState<boolean>(false);
   const [symbol, setSymbol] = useState<"X" | "O">("X");
   const [player, setPlayer] = useState<string>("");
