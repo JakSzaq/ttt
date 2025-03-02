@@ -302,265 +302,259 @@ const GameScreen: React.FC = () => {
   }, [moveCount]);
 
   return (
-    <>
-      <Container maxW="full" h="full" p={0}>
-        <AnimatePresence>
-          <VStack key="room" h="full" w="full">
-            <Stack
-              h="auto"
-              w={{ base: "full", lg: "75%" }}
-              direction={{ base: "column", lg: "row" }}
-              justifyContent={{ base: "center", lg: "space-between" }}
-              alignItems={{ base: "center", lg: "flex-start" }}
-            >
-              {isMobileSize && (
-                <CodeBox
-                  room={room}
-                  isOnLeftSide={true}
-                  isFull={isGameStarted}
-                />
-              )}
-              <Stack direction={{ base: "row", lg: "row" }}>
-                {isGameStarted && (
-                  <Text
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    fontSize={["4xl", "6xl"]}
-                    fontWeight={"black"}
-                    px={[5, 5, 10]}
-                    color={colors[0]}
-                  >
-                    {scores[0]}
-                  </Text>
-                )}
-                <AspectRatio
-                  maxW={{ base: "50px", sm: "100px" }}
-                  w={100}
-                  ratio={1}
-                  mb={{ base: "10px", lg: "0" }}
-                >
-                  <Logo
-                    color={colors[0]}
-                    theme={colors[1]}
-                    width={100}
-                    height={100}
-                  />
-                </AspectRatio>
-                {isGameStarted && (
-                  <Text
-                    display={"flex"}
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                    fontSize={["4xl", "6xl"]}
-                    fontWeight={"black"}
-                    px={[5, 5, 10]}
-                    color={colors[1]}
-                  >
-                    {scores[1]}
-                  </Text>
-                )}
-              </Stack>
-              <CodeBox
-                room={room}
-                isOnLeftSide={isMobileSize ? false : null}
-                isFull={isGameStarted}
-              />
-            </Stack>
-            <VStack h="12vh" justifyContent="center">
-              <Text
-                h="auto"
-                fontWeight="bold"
-                as={motion.p}
-                transition={".5s"}
-                fontSize={
-                  isGameStarted && !winner && !isGameTied
-                    ? ["3xl", "4xl"]
-                    : ["4vh", "4xl", "6xl"]
-                }
-              >
-                {gameStatusTitle}
-              </Text>
-              {isPlayerTurn && isGameStarted && !winner && !isGameTied && (
+    <Container maxW="full" h="full" p={0}>
+      <AnimatePresence>
+        <VStack key="room" h="full" w="full">
+          <Stack
+            h="auto"
+            w={{ base: "full", lg: "75%" }}
+            direction={{ base: "column", lg: "row" }}
+            justifyContent={{ base: "center", lg: "space-between" }}
+            alignItems={{ base: "center", lg: "flex-start" }}
+          >
+            {isMobileSize && (
+              <CodeBox room={room} isOnLeftSide={true} isFull={isGameStarted} />
+            )}
+            <Stack direction={{ base: "row", lg: "row" }}>
+              {isGameStarted && (
                 <Text
-                  h={10}
-                  fontSize={["md", "xl"]}
-                  fontWeight={"bold"}
-                  style={{ margin: 0 }}
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  fontSize={["4xl", "6xl"]}
+                  fontWeight={"black"}
+                  px={[5, 5, 10]}
+                  color={colors[0]}
                 >
-                  Select your size first
+                  {scores[0]}
                 </Text>
               )}
-            </VStack>
-            {isPlayerTurn && isGameStarted && !winner && !isGameTied && (
-              <AnimatePresence>
-                <VStack
-                  spacing={[1.5, 3]}
-                  as={motion.div}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: "50",
-                    damping: "15",
-                    bounce: "0.75",
-                  }}
-                  key={"options"}
-                >
-                  <HStack spacing={[1.5, 3]}>
-                    <SizeButton
-                      size={Size.LARGE}
-                      amount={sizeAmounts[0]}
-                      setChosenSize={setChosenSize}
-                      chosenSize={chosenSize}
-                      color={colors[0]}
-                    />
-                    <SizeButton
-                      size={Size.MEDIUM}
-                      amount={sizeAmounts[1]}
-                      setChosenSize={setChosenSize}
-                      chosenSize={chosenSize}
-                      color={colors[0]}
-                    />
-                    <SizeButton
-                      size={Size.SMALL}
-                      amount={sizeAmounts[2]}
-                      setChosenSize={setChosenSize}
-                      chosenSize={chosenSize}
-                      color={colors[0]}
-                    />
-                  </HStack>
-                </VStack>
-                <VStack h={3}>
-                  <Text h={1} w={["31vh", "42vh"]} bg={colors[1]} mt={1}></Text>
-                </VStack>
-              </AnimatePresence>
-            )}
-            <VStack
-              fontFamily="Outfit"
-              as={motion.div}
-              transition={".5s"}
-              spacing={[1.5, 3]}
-              transformOrigin={"50% 0"}
-              style={{
-                transform:
-                  !isGameStarted || winner || isGameTied
-                    ? "scale(1)"
-                    : isPlayerTurn
-                    ? "scale(1.25)"
-                    : "scale(1)",
-              }}
-              key={"board"}
-            >
-              <HStack spacing={[1.5, 3]}>
-                <Box
-                  index={0}
-                  turn={sendTurn}
-                  value={board[0]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={1}
-                  turn={sendTurn}
-                  value={board[1]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={2}
-                  turn={sendTurn}
-                  value={board[2]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-              </HStack>
-              <HStack spacing={[1.5, 3]}>
-                <Box
-                  index={3}
-                  turn={sendTurn}
-                  value={board[3]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={4}
-                  turn={sendTurn}
-                  value={board[4]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={5}
-                  turn={sendTurn}
-                  value={board[5]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-              </HStack>
-              <HStack spacing={[1.5, 3]}>
-                <Box
-                  index={6}
-                  turn={sendTurn}
-                  value={board[6]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={7}
-                  turn={sendTurn}
-                  value={board[7]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-                <Box
-                  index={8}
-                  turn={sendTurn}
-                  value={board[8]}
-                  combination={combination}
-                  player={symbol}
-                  color={colorType}
-                  boardSize={boardSize}
-                />
-              </HStack>
-            </VStack>
-            {(winner || isGameTied) && (
-              <Button
-                margin={["20px !important", "40px !important"]}
-                as={motion.button}
-                transition={".5s"}
-                initial={{ transform: "scale(0)" }}
-                animate={{ transform: "scale(1)" }}
-                w={[200, 250]}
-                borderRadius="50px"
-                bg="#FF6C6C"
-                onClick={sendRestart}
+              <AspectRatio
+                maxW={{ base: "50px", sm: "100px" }}
+                w={100}
+                ratio={1}
+                mb={{ base: "10px", lg: "0" }}
               >
-                Play again
-              </Button>
+                <Logo
+                  color={colors[0]}
+                  theme={colors[1]}
+                  width={100}
+                  height={100}
+                />
+              </AspectRatio>
+              {isGameStarted && (
+                <Text
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  fontSize={["4xl", "6xl"]}
+                  fontWeight={"black"}
+                  px={[5, 5, 10]}
+                  color={colors[1]}
+                >
+                  {scores[1]}
+                </Text>
+              )}
+            </Stack>
+            <CodeBox
+              room={room}
+              isOnLeftSide={isMobileSize ? false : null}
+              isFull={isGameStarted}
+            />
+          </Stack>
+          <VStack h="12vh" justifyContent="center">
+            <Text
+              h="auto"
+              fontWeight="bold"
+              as={motion.p}
+              transition={".5s"}
+              fontSize={
+                isGameStarted && !winner && !isGameTied
+                  ? ["3xl", "4xl"]
+                  : ["4vh", "4xl", "6xl"]
+              }
+            >
+              {gameStatusTitle}
+            </Text>
+            {isPlayerTurn && isGameStarted && !winner && !isGameTied && (
+              <Text
+                h={10}
+                fontSize={["md", "xl"]}
+                fontWeight={"bold"}
+                style={{ margin: 0 }}
+              >
+                Select your size first
+              </Text>
             )}
           </VStack>
-          <ActionButton buttonType="exitControl" />
-        </AnimatePresence>
-      </Container>
-    </>
+          {isPlayerTurn && isGameStarted && !winner && !isGameTied && (
+            <AnimatePresence>
+              <VStack
+                spacing={[1.5, 3]}
+                as={motion.div}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{
+                  type: "spring",
+                  stiffness: "50",
+                  damping: "15",
+                  bounce: "0.75",
+                }}
+                key={"options"}
+              >
+                <HStack spacing={[1.5, 3]}>
+                  <SizeButton
+                    size={Size.LARGE}
+                    amount={sizeAmounts[0]}
+                    setChosenSize={setChosenSize}
+                    chosenSize={chosenSize}
+                    color={colors[0]}
+                  />
+                  <SizeButton
+                    size={Size.MEDIUM}
+                    amount={sizeAmounts[1]}
+                    setChosenSize={setChosenSize}
+                    chosenSize={chosenSize}
+                    color={colors[0]}
+                  />
+                  <SizeButton
+                    size={Size.SMALL}
+                    amount={sizeAmounts[2]}
+                    setChosenSize={setChosenSize}
+                    chosenSize={chosenSize}
+                    color={colors[0]}
+                  />
+                </HStack>
+              </VStack>
+              <VStack h={3}>
+                <Text h={1} w={["31vh", "42vh"]} bg={colors[1]} mt={1}></Text>
+              </VStack>
+            </AnimatePresence>
+          )}
+          <VStack
+            fontFamily="Outfit"
+            as={motion.div}
+            transition={".5s"}
+            spacing={[1.5, 3]}
+            transformOrigin={"50% 0"}
+            style={{
+              transform:
+                !isGameStarted || winner || isGameTied
+                  ? "scale(1)"
+                  : isPlayerTurn
+                  ? "scale(1.25)"
+                  : "scale(1)",
+            }}
+            key={"board"}
+          >
+            <HStack spacing={[1.5, 3]}>
+              <Box
+                index={0}
+                turn={sendTurn}
+                value={board[0]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={1}
+                turn={sendTurn}
+                value={board[1]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={2}
+                turn={sendTurn}
+                value={board[2]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+            </HStack>
+            <HStack spacing={[1.5, 3]}>
+              <Box
+                index={3}
+                turn={sendTurn}
+                value={board[3]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={4}
+                turn={sendTurn}
+                value={board[4]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={5}
+                turn={sendTurn}
+                value={board[5]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+            </HStack>
+            <HStack spacing={[1.5, 3]}>
+              <Box
+                index={6}
+                turn={sendTurn}
+                value={board[6]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={7}
+                turn={sendTurn}
+                value={board[7]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+              <Box
+                index={8}
+                turn={sendTurn}
+                value={board[8]}
+                combination={combination}
+                player={symbol}
+                color={colorType}
+                boardSize={boardSize}
+              />
+            </HStack>
+          </VStack>
+          {(winner || isGameTied) && (
+            <Button
+              margin={["20px !important", "40px !important"]}
+              as={motion.button}
+              transition={".5s"}
+              initial={{ transform: "scale(0)" }}
+              animate={{ transform: "scale(1)" }}
+              w={[200, 250]}
+              borderRadius="50px"
+              bg="#FF6C6C"
+              onClick={sendRestart}
+            >
+              Play again
+            </Button>
+          )}
+        </VStack>
+        <ActionButton buttonType="exitControl" />
+      </AnimatePresence>
+    </Container>
   );
 };
 

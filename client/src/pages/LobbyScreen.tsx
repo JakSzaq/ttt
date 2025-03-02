@@ -84,64 +84,58 @@ const LobbyScreen: React.FC = () => {
   };
 
   return (
-    <>
-      <Container maxW="full" h="full" p={0}>
-        <VStack h="full" w="full">
-          <VStack h="500px">
-            <AspectRatio maxW="100px" w={100} ratio={1}>
-              <Logo
-                color={primaryColor}
-                theme="#FF8383"
-                width={100}
-                height={100}
-              />
-            </AspectRatio>
-            <Text fontWeight="bold" fontSize={["4xl", "6xl"]}>
-              Join a game
-            </Text>
-            <Stack direction={{ base: "column", sm: "row" }}>
-              <Input
-                ref={inputRef}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                value={roomCode}
-                w={200}
-                textAlign="center"
-                maxLength={8}
-                placeholder="Enter room code"
-              ></Input>
-              <Button onClick={handleJoin} bg={primaryColor}>
-                JOIN
-              </Button>
-            </Stack>
-          </VStack>
-          <VStack
-            position="relative"
-            h="full"
-            w="full"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <BackgroundSVG color={primaryColor} />
-            <Text
-              position="relative"
-              fontWeight="bold"
-              fontSize={["4xl", "6xl"]}
-            >
-              Create new room
-            </Text>
-            <Button
-              onClick={handleCreate}
-              w={[200, 250]}
-              borderRadius="50px"
-              bg="#FF6C6C"
-            >
-              Click to start
+    <Container maxW="full" h="full" p={0}>
+      <VStack h="full" w="full">
+        <VStack h="500px">
+          <AspectRatio maxW="100px" w={100} ratio={1}>
+            <Logo
+              color={primaryColor}
+              theme="#FF8383"
+              width={100}
+              height={100}
+            />
+          </AspectRatio>
+          <Text fontWeight="bold" fontSize={["4xl", "6xl"]}>
+            Join a game
+          </Text>
+          <Stack direction={{ base: "column", sm: "row" }}>
+            <Input
+              ref={inputRef}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              value={roomCode}
+              w={200}
+              textAlign="center"
+              maxLength={8}
+              placeholder="Enter room code"
+            ></Input>
+            <Button onClick={handleJoin} bg={primaryColor}>
+              JOIN
             </Button>
-          </VStack>
+          </Stack>
         </VStack>
-      </Container>
-    </>
+        <VStack
+          position="relative"
+          h="full"
+          w="full"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <BackgroundSVG color={primaryColor} />
+          <Text position="relative" fontWeight="bold" fontSize={["4xl", "6xl"]}>
+            Create new room
+          </Text>
+          <Button
+            onClick={handleCreate}
+            w={[200, 250]}
+            borderRadius="50px"
+            bg="#FF6C6C"
+          >
+            Click to start
+          </Button>
+        </VStack>
+      </VStack>
+    </Container>
   );
 };
 
