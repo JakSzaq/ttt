@@ -1,10 +1,17 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import path from "path";
 
 const PORT = process.env.PORT || 80;
 
 const app: Express = express();
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 app.get("/", (req, res) => {
   res.send("The server is up and running!");
