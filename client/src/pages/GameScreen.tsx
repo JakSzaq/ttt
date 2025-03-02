@@ -25,7 +25,12 @@ import { useColorType } from "../hooks/useColorType";
 
 import io from "socket.io-client";
 import { SizeButton } from "../components/SizeButton";
-const socket = io(import.meta.env.VITE_WS_SERVER);
+const socket = io(import.meta.env.VITE_WS_SERVER, {
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
+  transports: ["websocket"],
+});
 
 const GameScreen: React.FC = () => {
   const [board, setBoard] = useState<string[]>(Array(9).fill(""));

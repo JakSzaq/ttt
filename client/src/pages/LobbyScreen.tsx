@@ -17,7 +17,12 @@ import BackgroundSVG from "../assets/BackgroundSVG";
 import { useColorType } from "../hooks/useColorType";
 
 import io from "socket.io-client";
-const socket = io(import.meta.env.VITE_WS_SERVER);
+const socket = io(import.meta.env.VITE_WS_SERVER, {
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000,
+  transports: ["websocket"],
+});
 
 const LobbyScreen: React.FC = () => {
   const [roomCode, setRoomCode] = useState<string>("");

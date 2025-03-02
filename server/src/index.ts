@@ -7,14 +7,16 @@ const PORT = process.env.PORT || 80;
 
 const app: Express = express();
 
-app.use(express.static(path.join(__dirname, "dist")));
+const buildPath = path.join(__dirname, "../../client/dist");
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "dist", "index.html"));
-});
+app.use(express.static(buildPath));
 
 app.get("/", (req, res) => {
   res.send("The server is up and running!");
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
 });
 
 const server = app.listen(PORT, () =>
@@ -28,6 +30,9 @@ import { Server, Socket } from "socket.io";
 const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_ORIGIN,
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true,
   },
   connectionStateRecovery: {
     maxDisconnectionDuration: 2 * 60 * 1000,
