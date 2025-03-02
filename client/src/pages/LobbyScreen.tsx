@@ -1,6 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, NavigateFunction } from "react-router-dom";
-import { AspectRatio, Container, Button, Text, VStack, Stack, Input, useToast } from "@chakra-ui/react";
+import {
+  AspectRatio,
+  Container,
+  Button,
+  Text,
+  VStack,
+  Stack,
+  Input,
+  useToast,
+} from "@chakra-ui/react";
 import { random } from "../utils/Random";
 import { showToast } from "../utils/ShowToast";
 import Logo from "../assets/Logo";
@@ -8,7 +17,7 @@ import BackgroundSVG from "../assets/BackgroundSVG";
 import { useColorType } from "../hooks/useColorType";
 
 import io from "socket.io-client";
-const socket = io(process.env.REACT_APP_WS_SERVER || "http://localhost:80");
+const socket = io(import.meta.env.VITE_WS_SERVER);
 
 const LobbyScreen: React.FC = () => {
   const [roomCode, setRoomCode] = useState<string>("");
@@ -79,7 +88,12 @@ const LobbyScreen: React.FC = () => {
       <VStack h="full" w="full">
         <VStack h="500px">
           <AspectRatio maxW="100px" w={100} ratio={1}>
-            <Logo color={primaryColor} theme="#FF8383" width={100} height={100} />
+            <Logo
+              color={primaryColor}
+              theme="#FF8383"
+              width={100}
+              height={100}
+            />
           </AspectRatio>
           <Text fontWeight="bold" fontSize={["4xl", "6xl"]}>
             Join a game
@@ -100,12 +114,23 @@ const LobbyScreen: React.FC = () => {
             </Button>
           </Stack>
         </VStack>
-        <VStack position="relative" h="full" w="full" justifyContent="center" alignItems="center">
+        <VStack
+          position="relative"
+          h="full"
+          w="full"
+          justifyContent="center"
+          alignItems="center"
+        >
           <BackgroundSVG color={primaryColor} />
           <Text position="relative" fontWeight="bold" fontSize={["4xl", "6xl"]}>
             Create new room
           </Text>
-          <Button onClick={handleCreate} w={[200, 250]} borderRadius="50px" bg="#FF6C6C">
+          <Button
+            onClick={handleCreate}
+            w={[200, 250]}
+            borderRadius="50px"
+            bg="#FF6C6C"
+          >
             Click to start
           </Button>
         </VStack>
