@@ -1,10 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 import { Button, useColorMode } from "@chakra-ui/react";
 import { SunIcon, MoonIcon, CloseIcon } from "@chakra-ui/icons";
 import { IActionButtonProps } from "../types";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
-export const ActionButton: React.FC<IActionButtonProps> = ({ buttonType }) => {
+export const ActionButton: React.FC<IActionButtonProps> = memo(({ buttonType }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const navigate: NavigateFunction = useNavigate();
 
@@ -44,4 +44,4 @@ export const ActionButton: React.FC<IActionButtonProps> = ({ buttonType }) => {
       )}
     </>
   );
-};
+});

@@ -10,7 +10,9 @@ app.get("/", (req, res) => {
   res.send("The server is up and running!");
 });
 
-const server = app.listen(PORT, () => console.log(`Listening on port ${PORT}...`));
+const server = app.listen(PORT, () =>
+  console.log(`Listening on port ${PORT}...`)
+);
 
 // socket server
 
@@ -18,7 +20,7 @@ import { Server, Socket } from "socket.io";
 
 const io = new Server(server, {
   cors: {
-    origin: "http://127.0.0.1:5173",
+    origin: process.env.CLIENT_ORIGIN,
   },
   connectionStateRecovery: {
     maxDisconnectionDuration: 2 * 60 * 1000,
@@ -36,17 +38,15 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("addNewRoom", (room) => {
-    existingRooms.push(room, room);
-    console.log(`Existing rooms: ${existingRooms}`);
+    existingRooms.push(room);
   });
 
   socket.on("joinRoom", (room) => {
-    console.log(existingRooms);
     if (existingRooms.includes(room)) {
       clientsInRoom[room] = io.sockets.adapter.rooms.get(room)?.size;
       if (clientsInRoom[room] === undefined) {
         socket.join(room);
-        console.log(`New room: ${room}`);
+        socket.data.roomCode = room;
         socket.emit("setFirstPlayer", room);
       } else if (clientsInRoom[room] === 1) {
         io.to(room).emit("opponentJoinedAlert");
@@ -64,7 +64,9 @@ io.on("connection", (socket: Socket) => {
   socket.on("checkIfRoomExistsOrIsFull", (roomCode) => {
     if (existingRooms.includes(roomCode)) {
       clientsInRoom[roomCode] = io.sockets.adapter.rooms.get(roomCode)?.size;
-      clientsInRoom[roomCode] === 2 ? socket.emit("roomResponse", "roomIsFull") : socket.emit("roomResponse", roomCode);
+      clientsInRoom[roomCode] === 2
+        ? socket.emit("roomResponse", "roomIsFull")
+        : socket.emit("roomResponse", roomCode);
     } else {
       socket.emit("roomResponse", "roomIsNonexistent");
     }
@@ -75,32 +77,24 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("updateRoom", (room) => {
-    const players: number | undefined = io.sockets.adapter.rooms.get(room)?.size;
+    const players: number | undefined =
+      io.sockets.adapter.rooms.get(room)?.size;
     if (players === 1) {
       io.to(room).emit("opponentLeft");
     }
   });
 
-  socket.on("disconnecting", () => {
-    const room: string = updateRooms();
-    io.to(room).emit("gameStatusChanged");
-  });
-
-  socket.on("manualDisconnect", () => {
-    const room: string = updateRooms();
+  socket.on("manualDisconnect", (room) => {
     socket.leave(room);
-    io.to(room).emit("gameStatusChanged");
-  });
-
-  const updateRooms = () => {
-    const socketRooms: string[] = Array.from(socket.rooms);
-    const room: string = socketRooms[1];
-    if (io.sockets.adapter.rooms.get(room)?.size === 1) {
-      const index: number = existingRooms.indexOf(room);
-      if (index > -1) {
-        existingRooms.splice(index, 1);
+    if (io.sockets.adapter.rooms.get(room)?.size === 2) return;
+    setTimeout(() => {
+      if (
+        !io.sockets.adapter.rooms.get(room) &&
+        io.sockets.adapter.rooms.get(room)?.size === 1
+      ) {
+        existingRooms.splice(existingRooms.indexOf(room), 1);
       }
-    }
-    return room;
-  };
+    }, 10000);
+    io.to(room).emit("opponentLeft");
+  });
 });

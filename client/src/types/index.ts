@@ -15,6 +15,7 @@ export interface IGameBoardProps {
   combination: number[];
   player: string;
   color: string;
+  boardSize: number[];
 }
 
 export interface ICodeBoxProps {
@@ -38,6 +39,7 @@ export interface IRoomDataProps {
   index: number;
   room: string;
   value: string;
+  size: number;
 }
 
 export interface IColorTypeProps {
@@ -45,4 +47,22 @@ export interface IColorTypeProps {
   winner: boolean;
   moveCount: number;
   isPlayerTurn: boolean;
+  isGameTied: boolean;
+}
+
+export enum Size {
+  LARGE,
+  MEDIUM,
+  SMALL,
+}
+
+export interface SizesInterfaceI {
+  size: Size;
+  amount: number;
+}
+
+export interface ISizeButtonProps extends SizesInterfaceI {
+  setChosenSize: React.Dispatch<React.SetStateAction<Size>>;
+  chosenSize: Size;
+  color: string;
 }

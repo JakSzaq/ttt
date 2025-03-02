@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { Box, Text } from "@chakra-ui/react";
 
-export const Footer: React.FC = () => {
+export const Footer: React.FC = memo(() => {
   return (
     <Box w="full" h={10} position="fixed" bottom={0}>
       <Text letterSpacing={30} mr={-27} fontWeight="bold">
@@ -9,4 +9,4 @@ export const Footer: React.FC = () => {
       </Text>
     </Box>
   );
-};
+});
