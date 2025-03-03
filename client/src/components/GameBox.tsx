@@ -20,9 +20,9 @@ export const GameBox: React.FC<IGameBoardProps> = memo(
             onClick={() => turn(index)}
             fontSize={
               boardSize[index] === 0
-                ? ["8vh", "12vh"]
+                ? ["11vh", "14vh"]
                 : boardSize[index] === 1
-                ? ["6vh", "9vh"]
+                ? ["7vh", "9vh"]
                 : ["4vh", "6vh"]
             }
             transition={".25s"}
@@ -41,9 +41,9 @@ export const GameBox: React.FC<IGameBoardProps> = memo(
                 onClick={() => turn(index)}
                 fontSize={
                   boardSize[index] === 0
-                    ? ["8vh", "12vh"]
+                    ? ["11vh", "14vh"]
                     : boardSize[index] === 1
-                    ? ["6vh", "9vh"]
+                    ? ["7vh", "9vh"]
                     : ["4vh", "6vh"]
                 }
                 transition={".25s"}
@@ -60,9 +60,9 @@ export const GameBox: React.FC<IGameBoardProps> = memo(
                 onClick={() => turn(index)}
                 fontSize={
                   boardSize[index] === 0
-                    ? ["8vh", "12vh"]
+                    ? ["11vh", "14vh"]
                     : boardSize[index] === 1
-                    ? ["6vh", "9vh"]
+                    ? ["7vh", "9vh"]
                     : ["4vh", "6vh"]
                 }
                 transition={".25s"}
